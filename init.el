@@ -34,10 +34,16 @@
 ;; Projectile
 (use-package projectile
   :ensure t
-  :init
-  (setq projectile-require-project-root nil)
   :config
-  (projectile-mode 1))
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode +1))
+;;  (setq projectile-require-project-root nil)
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)))
+
 
 ;; Which Key
 (use-package which-key
@@ -48,8 +54,30 @@
   :config
   (which-key-mode 1))
 
+;;(use-package doom-modeline
+;;  :ensure t
+;;  :hook (after-init . doom-modeline-mode))
+
+(use-package spaceline
+  :ensure t
+  :init
+  (require 'spaceline-config)
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  :config
+  (progn
+    (spaceline-define-segment buffer-id
+      (if (buffer-file-name)
+          (let ((project-root (projectile-project-p)))
+            (if project-root
+                (file-relative-name (buffer-file-name) project-root)
+              (abbreviate-file-name (buffer-file-name))))
+        (powerline-buffer-id)))
+    (spaceline-spacemacs-theme)
+    (spaceline-toggle-minor-modes-off)))
+
+
 ;; All The Icons
-(use-package all-the-icons :ensure t)
+(use-package all-the-icons)
 
 ;; NeoTree
 (use-package neotree
@@ -64,7 +92,8 @@
 (use-package doom-themes
   :ensure t
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'doom-one t)
+  (setq doom-modeline-icon t))
 
 (use-package git-gutter
   :ensure t
@@ -126,7 +155,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (rainbow-delimiters js2-refactor company-tern tern company js2-mode doom-themes neotree all-the-icons which-key projectile use-package))))
+    (doom-modeline rainbow-delimiters js2-refactor company-tern tern company js2-mode doom-themes neotree all-the-icons which-key projectile use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
