@@ -2,18 +2,20 @@
 (menu-bar-mode -1)
 (tooltip-mode -1)
 (scroll-bar-mode -1)
-(global-linum-mode t)
+(global-display-line-numbers-mode t)
 ;; save session
-(desktop-save-mode 1)
+;; (desktop-save-mode 1)
 ;; Show matching parens
 (setq show-paren-delay 0)
 (show-paren-mode 1)
 ;; fonst mononoki size 12
-;(add-to-list 'default-frame-alist '(font . "mononoki-12"))
+(add-to-list 'default-frame-alist '(font . "mononoki-12"))
 (set-frame-font "Source Code Pro for Powerline-12")
 ;; frame dimension 80x24
 (add-to-list 'default-frame-alist '(height . 24))
 (add-to-list 'default-frame-alist '(width . 80))
+(ido-mode t)
+(defalias 'list-buffers 'ibuffer) ; make ibuffer default
 
 ;; package manager
 (require 'package)
@@ -30,7 +32,6 @@
   (package-install 'use-package))
 (require 'use-package)
 
-
 ;; Projectile
 (use-package projectile
   :ensure t
@@ -38,12 +39,11 @@
   (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode +1))
-;;  (setq projectile-require-project-root nil)
+  (setq projectile-require-project-root nil)
 
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status)))
-
 
 ;; Which Key
 (use-package which-key
@@ -54,9 +54,9 @@
   :config
   (which-key-mode 1))
 
-;;(use-package doom-modeline
-;;  :ensure t
-;;  :hook (after-init . doom-modeline-mode))
+; ;;(use-package doom-modeline
+; ;;  :ensure t
+; ;;  :hook (after-init . doom-modeline-mode))
 
 (use-package spaceline
   :ensure t
@@ -75,9 +75,8 @@
     (spaceline-spacemacs-theme)
     (spaceline-toggle-minor-modes-off)))
 
-
-;; All The Icons
-(use-package all-the-icons)
+; ;; All The Icons
+; (use-package all-the-icons)
 
 ;; NeoTree
 (use-package neotree
@@ -85,8 +84,8 @@
   :bind ("<f8>" . neotree-toggle))
 
 ;; Disable backup files
-;(setq make-backup-files nil) ; stop creating backup~ files
-;(setq auto-save-default nil) ; stop creating #autosave# files
+(setq make-backup-files nil) ; stop creating backup~ files
+(setq auto-save-default nil) ; stop creating #autosave# files
 
 ;; theme
 (use-package doom-themes
@@ -140,13 +139,18 @@
 ;;  :init (add-hook 'js2-mode-hook 'js2-refactor-mode))
 ;; Javascript end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; C++ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; C++ end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Clojure
+
 (use-package company
   :ensure t
   :config
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-lenght 2)
   ;;(add-hook 'js2-mode-hook 'company-mode)
-  )
+ )
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -155,7 +159,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (doom-modeline rainbow-delimiters js2-refactor company-tern tern company js2-mode doom-themes neotree all-the-icons which-key projectile use-package))))
+    (company git-gutter doom-themes spaceline which-key magit projectile use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
