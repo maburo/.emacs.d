@@ -1,0 +1,287 @@
+* Packages
+** Init pacakge
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(setq package-enable-at-at-startup nil)
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+                         ("gnu"   . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+(setq package-enable-at-startup nil)
+#+END_SRC
+** Use-package macro
+#+BEGIN_SRC emacs-lisp
+;; https://github.com/jwiegley/use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+#+END_SRC
+
+* Appearance
+** General
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(tooltip-mode -1)
+(scroll-bar-mode -1)
+(global-display-line-numbers-mode t)
+;; Highlight current line
+(global-hl-line-mode 1)
+(ido-mode t)
+;; This allows partial matches, e.g. "tl" will match "Tyrion Lannister"
+(setq ido-enable-flex-matching t)
+(setq ido-use-filename-at-point nil)
+(defalias 'list-buffers 'ibuffer)
+;; Don't try to match file across all "work" directories; only match files
+;; in the current directory displayed in the minibuffer
+(setq ido-auto-merge-work-directories-length -1)
+;; Includes buffer names of recently open files, even if they're not
+;; open now
+(setq ido-use-virtual-buffers t)
+#+END_SRC
+** Font
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(font . "mononoki-12"))
+(set-frame-font "Source Code Pro for Powerline-12")
+;; frame dimension 80x24
+(add-to-list 'default-frame-alist '(height . 24))
+(add-to-list 'default-frame-alist '(width . 80))
+#+END_SRC
+** Theme
+*** Doom-one
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+:ensure t
+:config
+(load-theme 'doom-one t)
+(setq doom-modeline-icon t))
+#+END_SRC
+** Modeline
+*** Spaceline
+#+BEGIN_SRC emacs-lisp
+(use-package spaceline
+:ensure t
+:init
+(require 'spaceline-config)
+(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+:config
+(progn
+(spaceline-define-segment buffer-id
+    (if (buffer-file-name)
+	(let ((project-root (projectile-project-p)))
+	(if project-root
+	    (file-relative-name (buffer-file-name) project-root)
+	    (abbreviate-file-name (buffer-file-name))))
+    (powerline-buffer-id)))
+(spaceline-spacemacs-theme)
+(spaceline-toggle-minor-modes-off)))
+#+END_SRC
+
+** NeoTree
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+:ensure t
+:bind ("<f8>" . neotree-toggle))
+#+END_SRC
+
+** Wich Key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+:ensure t
+:init
+(setq which-key-separator " ")
+(setq which-key-prefix-prefix "+")
+:config
+(which-key-mode 1))
+#+END_SRC
+
+** Rainbow delimiters
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+:ensure t
+:config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+#+END_SRC
+** Beacon
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+:ensure t
+:init (beacon-mode 1))
+#+END_SRC
+** Idle highlight mode
+#+BEGIN_SRC emacs-lisp
+  (use-package idle-highlight-mode
+    :ensure t
+    :init (idle-highlight-mode 1))
+#+END_SRC
+** Smex
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+:ensure t
+:init (smex-initialize)
+:bind ("M-x" . smex))
+#+END_SRC
+** Sublimity
+#+BEGIN_SRC emacs-lisp
+;; (use-package sublimity
+;; :ensure t
+;; :config 
+;; (require 'sublimity)
+;; (require 'sublimity-scroll)
+;; (require 'sublimity-attractive)
+;; (sublimity-mode 1))
+#+END_SRC
+** Centered window mode
+#+BEGIN_SRC emacs-lisp 
+(use-package centered-window :ensure t)
+#+END_SRC
+* Evil
+** Evil
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :ensure t
+    :config
+    (evil-mode))
+#+END_SRC
+
+* Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+;;    :hook (prog-mode . (lambda () company-mode))
+    :init (global-company-mode)
+    :config  
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-lenght 2)
+   )
+#+END_SRC
+
+* Yasnippet
+** Yasnippet
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :config
+  (use-package yasnippet-snippets
+    :ensure t)
+  (yas-global-mode t))
+#+END_SRC
+
+* Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :config
+  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (projectile-mode +1))
+  (setq projectile-require-project-root nil)
+#+END_SRC
+
+* Git
+** Magit
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)))
+#+END_SRC
+** Git-gutter
+#+BEGIN_SRC emacs-lisp
+(use-package git-gutter
+  :ensure t
+  :config
+  (global-git-gutter-mode))
+#+END_SRC
+
+* JavaScript
+** js2-mode
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+  :ensure t
+  :mode "\\.js\\'"
+  :interpreter "node"
+;;  :hook ((js2-mode . (lambda () company-mode)))
+  :interpreter "node"
+  :config
+  (setq js-indent-level 2
+	js2-basic-indent 2
+	js-chain-indent t))
+#+END_SRC
+** tern
+#+BEGIN_SRC emacs-lisp
+(use-package tern
+  :requires company
+  :after company
+  :ensure t
+  :init (add-hook 'js2-mode-hook 'tern-mode)
+  :config
+  (use-package company-tern
+    :ensure t
+    :init (add-to-list 'company-backends 'company-tern)))
+#+END_SRC
+** js2-refactor
+#+BEGIN_SRC emacs-lisp
+(use-package js2-refactor
+  :after js2-mode
+  :ensure t
+  :hook ((js2-mode . js2-refactor-mode)))
+#+END_SRC
+
+* C/C++
+* Clojure
+* Org
+** Company
+#+BEGIN_SRC emacs-lisp
+;;  (add-hook 'org-mode-hook 'company-mode)
+#+END_SRC
+** Org bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode))))
+#+END_SRC
+
+* Avy
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind
+    ("M-s" . avy-goto-char))
+#+END_SRC
+* Scripts
+** Comment line
+#+BEGIN_SRC emacs-lisp
+;; comments
+(defun toggle-comment-on-line ()
+  "comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(global-set-key (kbd "C-;") 'toggle-comment-on-line)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; Changes all yes/no questions to y/n type
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; No need for ~ files when editing
+(setq create-lockfiles nil)
+
+;; Go straight to scratch buffer on startup
+(setq inhibit-startup-message t)
+#+END_SRC
+
+* Demnu
+#+BEGIN_SRC emacs-lisp
+  (use-package dmenu
+    :ensure t
+    :bind
+    ("s-SPC" . dmenu))
+#+END_SRC
+* Symon
+#+BEGIN_SRC emacs-lisp
+  (use-package symon
+    :ensure t
+    :bind
+    ("s-h" . symon-mode))
+#+END_SRC
