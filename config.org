@@ -40,6 +40,15 @@
 ;; open now
 (setq ido-use-virtual-buffers t)
 #+END_SRC
+** Workgroups
+#+BEGIN_SRC emacs-lisp
+  (use-package workgroups2
+    :ensure t
+    :init
+    (setq wg-session-file "~/.emacs.d/.emacs_workgroups")
+    :config
+    (workgroups-mode 1))
+#+END_SRC
 ** Font
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(font . "mononoki-12"))
@@ -125,14 +134,14 @@
 #+BEGIN_SRC emacs-lisp
 ;; (use-package sublimity
 ;; :ensure t
-;; :config 
+;; :config
 ;; (require 'sublimity)
 ;; (require 'sublimity-scroll)
 ;; (require 'sublimity-attractive)
 ;; (sublimity-mode 1))
 #+END_SRC
 ** Centered window mode
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp
 (use-package centered-window :ensure t)
 #+END_SRC
 * Evil
@@ -150,7 +159,7 @@
     :ensure t
 ;;    :hook (prog-mode . (lambda () company-mode))
     :init (global-company-mode)
-    :config  
+    :config
     (setq company-idle-delay 0)
     (setq company-minimum-prefix-lenght 2)
    )
@@ -228,7 +237,17 @@
 #+END_SRC
 
 * C/C++
+** Cedet
+#+BEGIN_SRC emacs-lisp
+  ;;(require 'semantic)
+  ;;(global-semanticdb-minor-mode 1)
+  ;;(global-semantic-idle-scheduler-mode 1)
+  ;;(semantic-mode 1)
+  (add-hook 'c-mode-common-hook 'company-mode)
+#+END_SRC
+
 * Clojure
+
 * Org
 ** Company
 #+BEGIN_SRC emacs-lisp

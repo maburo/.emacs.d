@@ -18,7 +18,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (highlight-thing sublimity evil symon dmenu avy idle-highlight-mode beacon smex company-tern which-key use-package tern spaceline projectile neotree magit js2-refactor git-gutter doom-themes company))))
+    (workgroups2 restclient highlight-thing sublimity evil symon dmenu avy idle-highlight-mode beacon smex company-tern which-key use-package tern spaceline projectile neotree magit js2-refactor git-gutter doom-themes company))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
