@@ -1,18 +1,19 @@
 
 ;; ----- smex-history -----
 (
+ prettify-symbols-mode
+ load-file
  compile
  shell
- load-file
  cd
  5x5
  arp
- dbx
 )
 
 ;; ----- smex-data -----
 (
- (load-file . 1)
+ (load-file . 2)
  (compile . 4)
  (shell . 1)
+ (prettify-symbols-mode . 3)
 )

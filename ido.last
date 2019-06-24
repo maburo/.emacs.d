@@ -2,34 +2,44 @@
 
 ;; ----- ido-last-directory-list -----
 (
- ("/home/alex/projects/" . "cpp/")
+ ("/home/alex/projects/tmp/js/" . "src/")
+ ("/home/alex/projects/tmp/" . "js/")
+ ("/home/alex/projects/" . "tmp/")
  ("/home/alex/" . "projects/")
 )
 
 ;; ----- ido-work-directory-list -----
 (
+ "/home/alex/projects/tmp/js/src/"
  "/home/alex/projects/cpp/"
  "/home/alex/.emacs.d/"
 )
 
 ;; ----- ido-work-file-list -----
 (
+ "camera.js"
  "main.cpp"
+ "init.el"
  "Makefile"
  ".projectile"
  "makefile"
- "init.el"
 )
 
 ;; ----- ido-dir-file-cache -----
 (
- ("/home/alex/projects/cpp/" (23824 40331 59046 65000) "main.cpp" "../" "./" "main" ".projectile" "Makefile")
+ ("/home/alex/projects/tmp/js/src/" (23811 39379 633289 407000) "main.js" "../" "render/" "./" "obj.js" "math.js" "mesh.js" "#renderer.js#" "intersection.js" "grid.js" "renderer.js" "camera.js")
 
- ("/home/alex/" (23824 38883 815008 551000) "Templates/" ".bash_logout" ".ICEauthority" ".atom/" "Music/" ".viminfo" ".m2/" ".android/" "thrift-0.12.0/" ".pgadmin3" "Telegram/" ".oracle_jre_usage/" ".gnome/" ".nv/" ".groovy/" ".3T/" ".yEd/" ".tonbeller/" "../" ".emacs.d/" ".bashrc" ".wget-hsts" ".thunderbird/" ".cache/" "org.ics" "Downloads/" "./" "pokd_process_1--0.0.1--business_process.xml" ".xinputrc" ".npm/" "Public/" "Videos/" "robo3t-1.2.1-linux-x86_64-3e50a65/" ".dbus/" ".dbeaver4/" ".pki/" ".rnd" "Documents/" ".sudo_as_admin_successful" ".dmrc" ".xsession-errors" ".swt/" "projects/" "mp--0.0.1--business_process.xml" "idea-IC-183.5429.30/" ".docker/" ".gradle/" "pokd_fns--0.0.1--business_process.xml" ".kube/" ".Xauthority" "Pictures/" ".icons/" ".profile" ".cinnamon/" ".gtkrc-2.0" ".gnome2/" ".local/" ".java/" ".shutter/" ".pgadmin_histoqueries" ".dbeaver-drivers/" ".xsession-errors.old" ".eclipse/" ".mn_history" ".bash_history" ".install4j" "yEd/" ".pgpass" ".gtkrc-xfce" "Desktop/" ".gconf/" ".gnupg/" ".config/" ".themes/" ".spacemacs" ".mozilla/" ".IdeaIC2018.3/" ".gitconfig" ".thumbnails/" ".ssh/" ".linuxmint/" ".gimp-2.8/")
+ ("/home/alex/projects/tmp/js/" (23809 64589 831082 147000) "src/" "node_modules/" "../" "./" "index.html" "#index.html#" "assets/")
+
+ ("/home/alex/projects/tmp/" (23781 22094 405191 347000) "../" "./" ".git/" ".gitignore" "js/" "android/")
+
+ ("/home/alex/projects/cpp/" (23824 41785 324405 583000) "#main.cpp#" "main.cpp" "../" "./" "main" ".projectile" "Makefile")
+
+ ("/home/alex/.emacs.d/" (23824 41218 529933 655000) "transient/" "init.el" "recentf" "ido.last" "auto-save-list/" "../" ".cache/" "./" ".git/" ".gitignore" "smex-items" "config.org" "projectile-bookmarks.eld" "private/" "elpa/")
+
+ ("/home/alex/" (23824 40982 873001 127000) "Templates/" ".bash_logout" ".ICEauthority" ".atom/" "Music/" ".viminfo" ".m2/" ".android/" "thrift-0.12.0/" ".pgadmin3" "Telegram/" ".oracle_jre_usage/" ".gnome/" ".nv/" ".groovy/" ".3T/" ".yEd/" ".tonbeller/" "../" ".emacs.d/" ".bashrc" ".wget-hsts" ".thunderbird/" ".cache/" "org.ics" "Downloads/" "./" "pokd_process_1--0.0.1--business_process.xml" ".xinputrc" ".npm/" "Public/" "Videos/" "robo3t-1.2.1-linux-x86_64-3e50a65/" ".dbus/" ".dbeaver4/" ".pki/" ".rnd" "Documents/" ".sudo_as_admin_successful" ".dmrc" ".xsession-errors" ".swt/" "projects/" "mp--0.0.1--business_process.xml" "idea-IC-183.5429.30/" ".docker/" ".gradle/" "pokd_fns--0.0.1--business_process.xml" ".kube/" ".Xauthority" "Pictures/" ".icons/" ".profile" ".cinnamon/" ".gtkrc-2.0" ".gnome2/" ".local/" ".java/" ".shutter/" ".pgadmin_histoqueries" ".dbeaver-drivers/" ".xsession-errors.old" ".eclipse/" ".mn_history" ".bash_history" ".install4j" "yEd/" ".pgpass" ".gtkrc-xfce" "Desktop/" ".gconf/" ".gnupg/" ".config/" ".themes/" ".spacemacs" ".mozilla/" ".IdeaIC2018.3/" ".gitconfig" ".thumbnails/" ".ssh/" ".linuxmint/" ".gimp-2.8/")
 
  ("/home/alex/projects/" (23824 38435 865543 192000) "AngularJS-RESTful-Sample/" "act_id.sql" "bp/" "../" "./" "ops-scripts/" "gateway/" "cls_loader/" "camunda/" "godot/" "pom.xml" "sia/" "docker/" "tmp/" "bp-auto-test/" "cpp/" "esb/" "bp-camunda/" "antivirus-service/" "front/")
-
- ("/home/alex/.emacs.d/" (23824 38408 593452 932000) "transient/" "init.el" "auto-save-list/" "../" ".cache/" "./" ".git/" ".gitignore" "smex-items" "config.org" "projectile-bookmarks.eld" "private/" "elpa/")
 )
 
 ;; ----- ido-unc-hosts-cache -----

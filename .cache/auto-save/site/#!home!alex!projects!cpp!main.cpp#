@@ -1,0 +1,15 @@
+#include <iostream>
+
+void test()
+{
+  std::cout << "Test func" << std::endl;
+}
+
+int main()
+{
+  std::cout << "Hello world!" << std::endl;
+  test();
+  tes
+
+  return 0;
+}
