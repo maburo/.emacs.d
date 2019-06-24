@@ -1,16 +1,18 @@
 
 ;; ----- smex-history -----
 (
+ compile
+ shell
  load-file
  cd
  5x5
  arp
  dbx
- dig
- erc
 )
 
 ;; ----- smex-data -----
 (
  (load-file . 1)
+ (compile . 4)
+ (shell . 1)
 )
