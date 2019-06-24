@@ -1,0 +1,36 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/alex/projects/" . "cpp/")
+ ("/home/alex/" . "projects/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/alex/projects/cpp/"
+ "/home/alex/.emacs.d/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "main.cpp"
+ "Makefile"
+ ".projectile"
+ "makefile"
+ "init.el"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/alex/projects/cpp/" (23824 38738 362535 590000) "main.cpp" "../" "./" ".projectile" "Makefile")
+
+ ("/home/alex/projects/" (23824 38435 865543 192000) "AngularJS-RESTful-Sample/" "act_id.sql" "bp/" "../" "./" "ops-scripts/" "gateway/" "cls_loader/" "camunda/" "godot/" "pom.xml" "sia/" "docker/" "tmp/" "bp-auto-test/" "cpp/" "esb/" "bp-camunda/" "antivirus-service/" "front/")
+
+ ("/home/alex/.emacs.d/" (23824 38408 593452 932000) "transient/" "init.el" "auto-save-list/" "../" ".cache/" "./" ".git/" ".gitignore" "smex-items" "config.org" "projectile-bookmarks.eld" "private/" "elpa/")
+
+ ("/home/alex/" (23824 33329 621860 393000) "Templates/" ".bash_logout" ".ICEauthority" ".atom/" "Music/" ".viminfo" ".m2/" ".android/" "thrift-0.12.0/" ".pgadmin3" "Telegram/" ".oracle_jre_usage/" ".gnome/" ".nv/" ".groovy/" ".3T/" ".yEd/" ".tonbeller/" "../" ".emacs.d/" ".bashrc" ".wget-hsts" ".thunderbird/" ".cache/" "org.ics" "Downloads/" "./" "pokd_process_1--0.0.1--business_process.xml" ".xinputrc" ".npm/" "Public/" "Videos/" "robo3t-1.2.1-linux-x86_64-3e50a65/" ".dbus/" ".dbeaver4/" ".pki/" ".rnd" "Documents/" ".sudo_as_admin_successful" ".dmrc" ".xsession-errors" ".swt/" "projects/" "mp--0.0.1--business_process.xml" "idea-IC-183.5429.30/" ".docker/" ".gradle/" "pokd_fns--0.0.1--business_process.xml" ".kube/" ".Xauthority" "Pictures/" ".icons/" ".profile" ".cinnamon/" ".gtkrc-2.0" ".gnome2/" ".local/" ".java/" ".shutter/" ".pgadmin_histoqueries" ".dbeaver-drivers/" ".xsession-errors.old" ".eclipse/" ".mn_history" ".bash_history" ".install4j" "yEd/" ".pgpass" ".gtkrc-xfce" "Desktop/" ".gconf/" ".gnupg/" ".config/" ".themes/" ".spacemacs" ".mozilla/" ".IdeaIC2018.3/" ".gitconfig" ".thumbnails/" ".ssh/" ".linuxmint/" ".gimp-2.8/")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

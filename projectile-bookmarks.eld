@@ -1,0 +1,1 @@
+("~/projects/cpp/" "~/.emacs.d/" "~/projects/")
