@@ -1,3 +1,9 @@
+;; https://github.com/felixSchl/.emacs.d/blob/master/init.el
+;; https://github.com/weavejester/dotfiles/blob/master/emacs.d/init.el
+;; https://github.com/flyingmachine/emacs-for-clojure Clojure for brave and true
+;; https://github.com/kluge/emacs.d
+;; http://ccann.github.io/2015/10/18/cider.html
+
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (tooltip-mode -1)
@@ -47,6 +53,9 @@
   (package-initialize)
   (setq package-enable-at-startup nil)
 
+  ;; No cursor blinking, it's distracting
+  (blink-cursor-mode 0)
+  
   ; encoding
   (when (fboundp 'set-charset-priority)
         (set-charset-priority 'unicode))
@@ -57,12 +66,27 @@
   (setq locale-coding-system   'utf-8)
   (setq-default buffer-file-coding-system 'utf-8)
 
-  (setq inhibit-startup-screen t)
+  (setq inhibit-startup-screen t
+	;; no bell
+	ring-bell-function 'ignore
+	;; title
+	;;frame-title-format '("" "%b (%f)")
+        )
+
+  (setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
+  
   (setq-default create-lockfiles nil
                 make-backup-files nil
                 initial-scratch-message nil
                 ;; no beeping or blinking please
-                ring-bell-function #'ignore)
+                ring-bell-function #'ignore
+		;; don't use hard tabs
+		indent-tabs-mode nil
+                ;; wrap lines
+                fill-column 120)  
 
   ;; use package
   (unless (package-installed-p 'use-package)
@@ -74,19 +98,31 @@
   (add-to-list 'default-frame-alist '(font . "mononoki-12"))
   (set-frame-font "Source Code Pro for Powerline-12")
   ;; frame dimension 80x24
-  (add-to-list 'default-frame-alist '(height . 24))
-  (add-to-list 'default-frame-alist '(width . 80))
+  ;;(add-to-list 'default-frame-alist '(height . 24))
+  ;;(add-to-list 'default-frame-alist '(width . 80))
 
   (use-package diminish :ensure t)
-
+  ;; Key-chord - Key stroke combos
+  (use-package key-chord
+    :ensure t
+    :config
+    (key-chord-mode t))
+  
   (use-package evil
     :ensure t
     :config
     (evil-mode t)
     (evil-set-initial-state 'git-rebase-mode 'emacs)
     (add-hook 'git-commit-mode-hook 'evil-insert-state)
+    ;; The fastest way to leave insert mode:
+    (dolist (x '("jk" "jK" "JK" "Jk" "kj" "kJ" "KJ" "Kj"))
+      (key-chord-define evil-insert-state-map x 'evil-normal-state))
     )  
 
+  (use-package evil-org
+    :config
+    (add-hook 'org-mode-hook (lambda () (evil-org-mode +1))))
+ 
   ;; doom theme
   (use-package doom-themes
     :ensure t
@@ -119,7 +155,8 @@
     (setq which-key-separator " ")
     (setq which-key-prefix-prefix "+")
     :config
-    (which-key-mode 1))
+    (which-key-mode 1)
+    (diminish 'wich-key-mode))
 
   (use-package projectile
     :ensure t
@@ -127,7 +164,8 @@
     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     (projectile-mode +1)
-    (diminish 'projectile-mode))
+    (diminish 'projectile-mode)
+    (setq projectile-completion-system 'ivy))  
   (setq projectile-require-project-root nil)
 
   (use-package magit
@@ -169,7 +207,27 @@
           (rename-buffer new-name)
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
-  )
+
+  (use-package paredit
+    :ensure t
+    :hook ((emacs-lisp-mode-hook paredit-mode)
+           (clojure-mode-hook paredit-mode)
+           (clojurescript-mode-hook paredit-mode)
+           (clojurec-mode-hook paredit-mode)
+           (cider-repl-mode-hook paredit-mode)))
+ 
+  (use-package clojure-mode
+    :ensure t
+    :mode ("\\.clj\\'" "\\.cljs\\'" "\\.edn\\'"))
+
+  (use-package cider
+    :ensure t
+    :defer t
+    :hook ((cider-repl-mode-hook . rainbow-delimiters-mode))
+    :diminish cider-mode
+    :config
+    (setq nrepl-log-messages t))
+  )  
 
 
 (custom-set-variables
@@ -179,7 +237,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
