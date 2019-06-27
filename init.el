@@ -2,6 +2,11 @@
 (menu-bar-mode -1)
 (tooltip-mode -1)
 (scroll-bar-mode -1)
+(show-paren-mode t)
+
+(setq scroll-step 1)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+
 ;; line numbers
 (global-display-line-numbers-mode t)
 ;; Highlight current line
@@ -11,6 +16,10 @@
 ;; display “lambda” as “λ”
 (global-prettify-symbols-mode 1)
 
+;use-package xah-fly-keys
+; :ensure t
+; :config
+; (xah-fly-keys-set-layout "qwerty"))
 
 ;; IDO
 (ido-mode t)
@@ -24,16 +33,23 @@
 ;; Includes buffer names of recently open files, even if they're not open now
 (setq ido-use-virtual-buffers t)
 
+;; Keymappings
+(global-set-key (kbd "<f6>")
+		(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+(global-set-key (kbd "M-<f6>")
+		(lambda () (interactive) (load-file "~/.emacs.d/init.el")))
+
 (let ((gc-cons-threshold most-positive-fixnum))
   (require 'package)
   (setq package-enable-at-at-startup nil)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")))
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+			   ("melpa" . "https://melpa.org/packages/")))
   (package-initialize)
   (setq package-enable-at-startup nil)
 
   ; encoding
   (when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))
+        (set-charset-priority 'unicode))
   (prefer-coding-system        'utf-8)
   (set-terminal-coding-system  'utf-8)
   (set-keyboard-coding-system  'utf-8)
@@ -61,12 +77,32 @@
   (add-to-list 'default-frame-alist '(height . 24))
   (add-to-list 'default-frame-alist '(width . 80))
 
+  (use-package diminish :ensure t)
+
+  (use-package evil
+    :ensure t
+    :config
+    (evil-mode t)
+    (evil-set-initial-state 'git-rebase-mode 'emacs)
+    (add-hook 'git-commit-mode-hook 'evil-insert-state)
+    )  
+
   ;; doom theme
   (use-package doom-themes
     :ensure t
     :config
     (load-theme 'doom-one t)
     (setq doom-modeline-icon t))
+
+  ;; spaceline
+  (use-package spaceline
+    :ensure t
+    :init
+    (require 'spaceline-config)
+    :config
+    (progn
+      (spaceline-spacemacs-theme)
+      ))
 
   (use-package rainbow-delimiters
     :ensure t
@@ -76,12 +112,22 @@
     :ensure t
     :init (smex-initialize)
     :bind ("M-x" . smex))
+
+  (use-package which-key
+    :ensure t
+    :init
+    (setq which-key-separator " ")
+    (setq which-key-prefix-prefix "+")
+    :config
+    (which-key-mode 1))
+
   (use-package projectile
     :ensure t
     :config
     (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1))
+    (projectile-mode +1)
+    (diminish 'projectile-mode))
   (setq projectile-require-project-root nil)
 
   (use-package magit
@@ -96,10 +142,12 @@
   (use-package company
     :ensure t
 ;;    :hook (prog-mode . (lambda () company-mode))
-    :init (global-company-mode)
+    :init
+    (global-company-mode)
     :config
     (setq company-idle-delay 0)
-    (setq company-minimum-prefix-lenght 2))
+    (setq company-minimum-prefix-lenght 2)
+    (diminish 'company-mode))
   
   (use-package symon
     :ensure t
@@ -121,24 +169,6 @@
           (rename-buffer new-name)
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
-
-  ;; spaceline
-  ; (use-package spaceline
-  ;   :ensure t
-  ;   :init
-  ;   (require 'spaceline-config)
-  ;   (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state))
-;    :config
-;    (progn
-;      (spaceline-define-segment buffer-id
-;	       (if (buffer-file-name)
-;	        (let ((project-root (projectile-project-p)))
-;	         (if project-root
-;	            (file-relative-name (buffer-file-name) project-root)
-;	             (abbreviate-file-name (buffer-file-name))))
-;               (powerline-buffer-id)))
-;               (spaceline-spacemacs-theme)
-;               (spaceline-toggle-minor-modes-off)))
   )
 
 
@@ -149,7 +179,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
