@@ -9,6 +9,7 @@
 (tooltip-mode -1)
 (scroll-bar-mode -1)
 (show-paren-mode t)
+(desktop-save-mode t)
 
 (setq scroll-step 1)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
@@ -102,6 +103,7 @@
   ;;(add-to-list 'default-frame-alist '(width . 80))
 
   (use-package diminish :ensure t)
+
   ;; Key-chord - Key stroke combos
   (use-package key-chord
     :ensure t
@@ -120,9 +122,13 @@
     )  
 
   (use-package evil-org
-    :config
-    (add-hook 'org-mode-hook (lambda () (evil-org-mode +1))))
- 
+    :ensure t
+    :hook (org-mode . evil-org-mode))
+
+  (use-package org-bullets
+    :ensure t
+    :hook (org-mode . org-bullets-mode))
+  
   ;; doom theme
   (use-package doom-themes
     :ensure t
@@ -142,7 +148,7 @@
 
   (use-package rainbow-delimiters
     :ensure t
-    :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+    :hook (prog-mode . rainbow-delimiters-mode))
 
   (use-package smex
     :ensure t
@@ -174,8 +180,7 @@
 
   (use-package avy
     :ensure t
-    :bind
-    ("M-s" . avy-goto-char))
+    :bind ("M-s" . avy-goto-char))
 
   (use-package company
     :ensure t
