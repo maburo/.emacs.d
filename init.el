@@ -55,7 +55,7 @@
 ;; Keymappings
 (global-set-key (kbd "<f6>")
 		(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
-(global-set-key (kbd "M-<f6>")
+(global-set-key (kbd "S-<f6>")
 		(lambda () (interactive) (load-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "<f7>") 'switch-to-buffer)
 (global-set-key (kbd "S-<f7>") 'list-buffers)
@@ -124,6 +124,14 @@
     :ensure t
     :bind ("M-;" . smart-comment))
 
+  ;; Undo tree
+  ;; C-/ undo, C-S-/ redo, C-x u tree (d diff)
+  (use-package undo-tree
+    :ensure t
+    :diminish undo-tree-mode
+    :init
+    (global-undo-tree-mode))
+
   ;; Key-chord - Key stroke combos
   (use-package key-chord
     :ensure t
@@ -143,6 +151,7 @@
 
   (use-package evil-org
     :ensure t
+    :diminish evil-org-mode
     :hook (org-mode . evil-org-mode))
 
   (use-package org-bullets
