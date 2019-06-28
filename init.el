@@ -4,10 +4,22 @@
 ;; https://github.com/kluge/emacs.d
 ;; http://ccann.github.io/2015/10/18/cider.html
 
-(tool-bar-mode -1)
-(menu-bar-mode -1)
+;; https://wwwtech.de/articles/2011/jul/emacs-restore-last-frame-size-on-startup
+
+;; .Xresources
+;; emacs.Font: Source Code Pro for Powerline-12
+;; emacs.menuBar: off
+;; emacs.toolBar: off
+;; emacs.scrollBar: off
+
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+;; (tool-bar-mode -1)
+;; (menu-bar-mode -1)
 (tooltip-mode -1)
-(scroll-bar-mode -1)
+;; (scroll-bar-mode -1)
 (show-paren-mode t)
 (desktop-save-mode t)
 
@@ -45,6 +57,10 @@
 		(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
 (global-set-key (kbd "M-<f6>")
 		(lambda () (interactive) (load-file "~/.emacs.d/init.el")))
+(global-set-key (kbd "<f7>") 'switch-to-buffer)
+(global-set-key (kbd "S-<f7>") 'list-buffers)
+(global-set-key (kbd "<f8>") 'other-window)
+                    
 
 (let ((gc-cons-threshold most-positive-fixnum))
   (require 'package)
@@ -104,6 +120,10 @@
 
   (use-package diminish :ensure t)
 
+  (use-package smart-comment
+    :ensure t
+    :bind ("M-;" . smart-comment))
+
   ;; Key-chord - Key stroke combos
   (use-package key-chord
     :ensure t
@@ -157,12 +177,23 @@
 
   (use-package which-key
     :ensure t
+    :defer 10
+    :diminish which-key-mode
     :init
-    (setq which-key-separator " ")
-    (setq which-key-prefix-prefix "+")
+    (setq which-key-separator " "
+          which-key-prefix-prefix "+")
     :config
-    (which-key-mode 1)
-    (diminish 'wich-key-mode))
+    (setq which-key-key-replacement-alist
+          '(("<\\([[:alnum:]-]+\\)>" . "\\1")
+            ("left"                  . "◀")
+            ("right"                 . "▶")
+            ("up"                    . "▲")
+            ("down"                  . "▼")
+            ("delete"                . "DEL") ; delete key
+            ("\\`DEL\\'"             . "BS") ; backspace key
+            ("next"                  . "PgDn")
+            ("prior"                 . "PgUp")))          
+    (which-key-mode 1))
 
   (use-package projectile
     :ensure t
@@ -194,8 +225,7 @@
   
   (use-package symon
     :ensure t
-    :bind
-    ("s-h" . symon-mode))
+    :bind ("s-h" . symon-mode))
 
   ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
   (defun rename-file-and-buffer (new-name)
