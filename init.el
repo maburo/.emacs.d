@@ -137,6 +137,10 @@
     :ensure t
     :config
     (key-chord-mode t))
+
+  (use-package expand-region
+    :ensure t
+    :bind ("C-=" . er/expand-region))
   
   (use-package evil
     :ensure t
@@ -149,6 +153,10 @@
       (key-chord-define evil-insert-state-map x 'evil-normal-state))
     )  
 
+  (use-package org
+    :hook ((org-mode . org-indent-mode)
+           (org-mode . visual-line-mode)))
+  
   (use-package evil-org
     :ensure t
     :diminish evil-org-mode
@@ -166,18 +174,48 @@
     (setq doom-modeline-icon t))
 
   ;; spaceline
-  (use-package spaceline
-    :ensure t
-    :init
-    (require 'spaceline-config)
-    :config
-    (progn
-      (spaceline-spacemacs-theme)
-      ))
+  ;; (use-package spaceline
+  ;;   :ensure t
+  ;;   :init
+  ;;   (require 'spaceline-config)
+  ;;   :config
+  ;;   (progn
+  ;;     (spaceline-spacemacs-theme)
+  ;;     ))
 
+  ;; M-x all-the-icons-install-font
+  (use-package all-the-icons)
+    
+  (use-package doom-modeline
+    :ensure t
+    :hook (after-init . doom-modeline-mode))
+  
+  (use-package beacon
+    :ensure t
+    :init (beacon-mode t))
+  
   (use-package rainbow-delimiters
     :ensure t
     :hook (prog-mode . rainbow-delimiters-mode))
+
+  (use-package yasnippet
+    :ensure t
+    :demand t
+    :diminish yas-minor-mode
+    ;; :bind (("C-c y d" . yas-load-directory)
+    ;;        ("C-c y i" . yas-insert-snippet)
+    ;;        ("C-c y f" . yas-visit-snippet-file)
+    ;;        ("C-c y n" . yas-new-snippet)
+    ;;        ("C-c y t" . yas-tryout-snippet)
+    ;;        ("C-c y l" . yas-describe-tables)
+    ;;        ("C-c y g" . yas/global-mode)
+    ;;        ("C-c y m" . yas/minor-mode)
+    ;;        ("C-c y r" . yas-reload-all)
+    ;;        ("C-c y x" . yas-expand))
+    :config
+    (use-package yasnippet-snippets :ensure t)
+    ;; (add-to-list 'yas-snippet-dirs (ag/emacs-subdirectory "snippets"))
+    (yas-global-mode t))
 
   (use-package smex
     :ensure t
@@ -206,17 +244,34 @@
 
   (use-package projectile
     :ensure t
+    :bind (("C-c p" . projectile-command-map)
+           ("s-p" . projectile-command-map))
+    :diminish projectile-mode
     :config
-    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (projectile-mode +1)
-    (diminish 'projectile-mode)
-    (setq projectile-completion-system 'ivy))  
-  (setq projectile-require-project-root nil)
+    ;; (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
+    ;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (projectile-mode t)
+    ;; (diminish 'projectile-mode)
+    (setq projectile-completion-system 'ivy
+          projectile-require-project-root nil))  
+  ;; (setq projectile-require-project-root nil)
+
+  ;; Helm
+  (use-package helm
+    :ensure t)
+
+  (use-package helm-projectile
+    :ensure t) 
 
   (use-package magit
     :ensure t
     :bind (("C-x g" . magit-status)))
+
+  (use-package git-gutter
+    :ensure t
+    :defer 10
+    :config
+    (global-git-gutter-mode))
 
   (use-package avy
     :ensure t
@@ -254,11 +309,10 @@
 
   (use-package paredit
     :ensure t
-    :hook ((emacs-lisp-mode-hook paredit-mode)
-           (clojure-mode-hook paredit-mode)
-           (clojurescript-mode-hook paredit-mode)
-           (clojurec-mode-hook paredit-mode)
-           (cider-repl-mode-hook paredit-mode)))
+    :diminish
+    :hook (((lisp-mode emacs-lisp-mode) . paredit-mode)
+           ((clojure-mode clojurescript-mode) . paredit-mode)
+           (cider-repl-mode paredit-mode)))  
  
   (use-package clojure-mode
     :ensure t
@@ -281,10 +335,10 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (yasnippet-snippets yasnippet centered-window helm doom-modeline git-gutter clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(fringe ((t (:background "#282c34")))))
