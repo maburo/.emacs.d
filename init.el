@@ -16,12 +16,9 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; (tool-bar-mode -1)
-;; (menu-bar-mode -1)
 (tooltip-mode -1)
-;; (scroll-bar-mode -1)
 (show-paren-mode t)
-(desktop-save-mode t)
+;; (desktop-save-mode)
 
 (setq scroll-step 1)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
@@ -60,6 +57,7 @@
 (global-set-key (kbd "<f7>") 'switch-to-buffer)
 (global-set-key (kbd "S-<f7>") 'list-buffers)
 (global-set-key (kbd "<f8>") 'other-window)
+(global-set-key (kbd "M-s-/") 'undo-tree-visualize)
                     
 
 (let ((gc-cons-threshold most-positive-fixnum))
@@ -200,6 +198,7 @@
 
   (use-package yasnippet
     :ensure t
+    :defer 10
     :demand t
     :diminish yas-minor-mode
     ;; :bind (("C-c y d" . yas-load-directory)
@@ -273,9 +272,13 @@
     :config
     (global-git-gutter-mode))
 
-  (use-package avy
+  ;; (use-package avy
+  ;;   :ensure t
+  ;;   :bind ("M-s" . avy-goto-char))
+  
+  (use-package ace-jump-mode
     :ensure t
-    :bind ("M-s" . avy-goto-char))
+    :bind (("M-s" . ace-jump-mode)))
 
   (use-package company
     :ensure t
@@ -307,12 +310,12 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-  (use-package paredit
-    :ensure t
-    :diminish
-    :hook (((lisp-mode emacs-lisp-mode) . paredit-mode)
-           ((clojure-mode clojurescript-mode) . paredit-mode)
-           (cider-repl-mode paredit-mode)))  
+  ;; (use-package paredit
+  ;;   :ensure t
+  ;;   :diminish
+  ;;   :hook (((lisp-mode emacs-lisp-mode) . paredit-mode)
+  ;;          ((clojure-mode clojurescript-mode) . paredit-mode)
+  ;;          (cider-repl-mode paredit-mode)))  
  
   (use-package clojure-mode
     :ensure t
@@ -335,7 +338,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (yasnippet-snippets yasnippet centered-window helm doom-modeline git-gutter clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (ace-jump-mode esup yasnippet-snippets yasnippet centered-window helm doom-modeline git-gutter clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
