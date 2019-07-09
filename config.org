@@ -101,8 +101,13 @@ https://github.com/jwiegley/use-package
 ** Doom modeline
 #+BEGIN_SRC emacs-lisp
   ;; M-x all-the-icons-install-font
-  (use-package all-the-icons)
-    
+  (use-package all-the-icons
+    :if window-system
+    :ensure t
+    :config
+    (when (not (member "all-the-icons" (font-family-list)))
+      (all-the-icons-install-fonts t)))
+
   (use-package doom-modeline
     :ensure t
     :hook (after-init . doom-modeline-mode))
@@ -245,6 +250,10 @@ https://github.com/jwiegley/use-package
     :config
     (global-git-gutter-mode))
 #+END_SRC
+* Projectile
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
 * Helm
 ** Helm
 #+BEGIN_SRC emacs-lisp
@@ -269,3 +278,7 @@ https://github.com/jwiegley/use-package
     :ensure t
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
+* C/C++
+* Javascript
+* Html
+* Clojure
