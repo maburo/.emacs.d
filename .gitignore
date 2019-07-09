@@ -1,3 +1,5 @@
-*
-!init.el
-!config.org
+/elpa
+/auto-save-list
+config.el
+.emacs.desktop
+*.*~
