@@ -12,55 +12,50 @@
 ;; emacs.toolBar: off
 ;; emacs.scrollBar: off
 
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(let ((gc-cons-threshold most-positive-fixnum))
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(tooltip-mode -1)
-(show-paren-mode t)
-;; (desktop-save-mode)
+  (tooltip-mode -1)
+  (show-paren-mode t)
+  ;; (desktop-save-mode)
 
-(setq scroll-step 1)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+  (setq scroll-step 1)
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
-;; line numbers
-(global-display-line-numbers-mode t)
-;; Highlight current line
-(global-hl-line-mode 1)
-;; Changes all yes/no questions to y/n type
-(fset 'yes-or-no-p 'y-or-n-p)
-;; display “lambda” as “λ”
-(global-prettify-symbols-mode 1)
+  ;; line numbers
+  (global-display-line-numbers-mode t)
+  ;; Highlight current line
+  (global-hl-line-mode 1)
+  ;; Changes all yes/no questions to y/n type
+  (fset 'yes-or-no-p 'y-or-n-p)
+  ;; display “lambda” as “λ”
+  (global-prettify-symbols-mode 1)
 
-;use-package xah-fly-keys
-; :ensure t
-; :config
-; (xah-fly-keys-set-layout "qwerty"))
+  ;; IDO
+  (ido-mode t)
+  ;; This allows partial matches, e.g. "tl" will match "Tyrion Lannister"
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-filename-at-point nil)
+  (defalias 'list-buffers 'ibuffer)
+  ;; Don't try to match file across all "work" directories; only match files
+  ;; in the current directory displayed in the minibuffer
+  (setq ido-auto-merge-work-directories-length -1)
+  ;; Includes buffer names of recently open files, even if they're not open now
+  (setq ido-use-virtual-buffers t)
 
-;; IDO
-(ido-mode t)
-;; This allows partial matches, e.g. "tl" will match "Tyrion Lannister"
-(setq ido-enable-flex-matching t)
-(setq ido-use-filename-at-point nil)
-(defalias 'list-buffers 'ibuffer)
-;; Don't try to match file across all "work" directories; only match files
-;; in the current directory displayed in the minibuffer
-(setq ido-auto-merge-work-directories-length -1)
-;; Includes buffer names of recently open files, even if they're not open now
-(setq ido-use-virtual-buffers t)
-
-;; Keymappings
-(global-set-key (kbd "<f6>")
-		(lambda () (interactive) (find-file "~/.emacs.d/init.el")))
-(global-set-key (kbd "S-<f6>")
-		(lambda () (interactive) (load-file "~/.emacs.d/init.el")))
-(global-set-key (kbd "<f7>") 'switch-to-buffer)
-(global-set-key (kbd "S-<f7>") 'list-buffers)
-(global-set-key (kbd "<f8>") 'other-window)
-(global-set-key (kbd "M-s-/") 'undo-tree-visualize)
+  ;; Keymappings
+  (global-set-key (kbd "<f6>")
+		  (lambda () (interactive) (find-file "~/.emacs.d/init.el")))
+  (global-set-key (kbd "S-<f6>")
+		  (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
+  (global-set-key (kbd "<f7>") 'switch-to-buffer)
+  (global-set-key (kbd "S-<f7>") 'list-buffers)
+  ;; (global-set-key (kbd "<f8>") 'other-window)
+  (global-set-key (kbd "M-s-/") 'undo-tree-visualize)
                     
 
-(let ((gc-cons-threshold most-positive-fixnum))
   (require 'package)
   (setq package-enable-at-at-startup nil)
   (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
@@ -135,6 +130,17 @@
     :ensure t
     :config
     (key-chord-mode t))
+
+  (use-package hydra
+    :ensure t
+    :config
+    (defhydra hydra-widow-size (global-map "S-<f8>")
+      "win size"
+      ("<up>" enlarge-window "▮ ◱")
+      ("<down>" shrink-window "▮ ▫")
+      ("<left>" shrink-window-horizontally "▬ ▫")
+      ("<right>" enlarge-window-horizontally "▬ ◱")))
+  
 
   (use-package expand-region
     :ensure t
@@ -280,6 +286,10 @@
     :ensure t
     :bind (("M-s" . ace-jump-mode)))
 
+  (use-package ace-window
+    :ensure t
+    :bind ("<f8>" . ace-window))
+
   (use-package company
     :ensure t
 ;;    :hook (prog-mode . (lambda () company-mode))
@@ -310,12 +320,12 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-  ;; (use-package paredit
-  ;;   :ensure t
-  ;;   :diminish
-  ;;   :hook (((lisp-mode emacs-lisp-mode) . paredit-mode)
-  ;;          ((clojure-mode clojurescript-mode) . paredit-mode)
-  ;;          (cider-repl-mode paredit-mode)))  
+  (use-package paredit
+    :ensure t
+    :diminish
+    :hook (((lisp-mode emacs-lisp-mode) . paredit-mode)
+           ((clojure-mode clojurescript-mode) . paredit-mode)
+           (cider-repl-mode paredit-mode)))  
  
   (use-package clojure-mode
     :ensure t
@@ -338,7 +348,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ace-jump-mode esup yasnippet-snippets yasnippet centered-window helm doom-modeline git-gutter clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (hydra ace-jump-mode esup yasnippet-snippets yasnippet centered-window helm doom-modeline git-gutter clojure-mode key-chord evil-org evil xah-fly-keys doom-themes ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package toc-org tern sql-indent spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode coffee-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
