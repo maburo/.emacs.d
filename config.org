@@ -29,38 +29,38 @@ https://github.com/jwiegley/use-package
 #+BEGIN_SRC emacs-lisp
   ;;  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   ;;  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-    (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-    (tooltip-mode -1)
-    (show-paren-mode t)
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (tooltip-mode -1)
+  (show-paren-mode t)
 
-    ;; line numbers
-    (global-display-line-numbers-mode t)
+  ;; line numbers
+  (global-display-line-numbers-mode t)
 
-    ;; Highlight current line
-    (global-hl-line-mode 1)
+  ;; Highlight current line
+  (global-hl-line-mode 1)
 
-    ;; Changes all yes/no questions to y/n type
-    (fset 'yes-or-no-p 'y-or-n-p)
+  ;; Changes all yes/no questions to y/n type
+  (fset 'yes-or-no-p 'y-or-n-p)
 
-    ;; display “lambda” as “λ”
-    (global-prettify-symbols-mode 1)
+  ;; display “lambda” as “λ”
+  (global-prettify-symbols-mode 1)
 
-    ;; No cursor blinking, it's distracting
-    (blink-cursor-mode 0)
+  ;; No cursor blinking, it's distracting
+  (blink-cursor-mode 0)
 
-   (setq-default create-lockfiles nil
-                  make-backup-files nil
-                  initial-scratch-message nil
-                  ;; no beeping or blinking please
-                  ring-bell-function #'ignore
-                  ;; don't use hard tabs
-                  indent-tabs-mode nil
-                  ;; wrap lines
-                  fill-column 120)  
+  (setq-default create-lockfiles nil
+                make-backup-files nil
+                initial-scratch-message nil
+                ;; no beeping or blinking please
+                ring-bell-function #'ignore
+                ;; don't use hard tabs
+                indent-tabs-mode nil
+                ;; wrap lines
+                fill-column 120)  
 
-    (setq inhibit-startup-screen t
-          ;; no bell
-          ring-bell-function 'ignore)
+  (setq inhibit-startup-screen t
+        ;; no bell
+        ring-bell-function 'ignore)
 #+END_SRC
 ** Title
 #+BEGIN_SRC emacs-lisp
@@ -203,9 +203,23 @@ https://github.com/jwiegley/use-package
     :init
     (global-company-mode)
     :config
+    ;; From https://github.com/company-mode/company-mode/issues/87
+    ;; See also https://github.com/company-mode/company-mode/issues/123
+    (defadvice company-pseudo-tooltip-unless-just-one-frontend
+        (around only-show-tooltip-when-invoked activate)
+      (when (company-explicit-action-p)
+        ad-do-it))
     (setq company-idle-delay 0)
     (setq company-minimum-prefix-lenght 2)
     (diminish 'company-mode))
+#+END_SRC
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
+           ("\\.m\\'" . c-mode)
+           ("\\.mm\\'" . c++-mode))
+    :ensure t)
 #+END_SRC
 * Yansippet
 #+BEGIN_SRC emacs-lisp
@@ -292,6 +306,35 @@ https://github.com/jwiegley/use-package
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
 * C/C++
+** Cmake-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package cmake-mode
+    :mode ("CMakeLists.txt" "\\.cmake\\'"))
+#+END_SRC
 * Javascript
+** js2-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :ensure t
+    :mode "\\.js\\'"
+    :interpreter "node"
+    :config
+    (setq js-indent-level 2
+          js2-basic-indent 2
+          js-chain-indent t))
+#+END_SRC
+** tern
+#+BEGIN_SRC emacs-lisp
+  (use-package tern
+    :requires company
+    :after company
+    :hook (js2-mode . tern-mode)
+    :ensure t
+  ;;  :init (add-hook 'js2-mode-hook 'tern-mode)
+    :config
+    (use-package company-tern
+      :ensure t
+      :init (add-to-list 'company-backends 'company-tern)))
+#+END_SRC
 * Html
 * Clojure
