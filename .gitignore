@@ -1,5 +1,4 @@
-/elpa
-/auto-save-list
-config.el
-.emacs.desktop
-*.*~
+*
+!init.el
+!config.org
+!.gitignore
