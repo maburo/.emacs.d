@@ -9,7 +9,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (visual-regexp visual-replace undo-tree anzu try company-tern flycheck git-timemachine yasnippet-snippets use-package))))
+    (cider clojure-mode visual-regexp visual-replace undo-tree anzu try company-tern flycheck git-timemachine yasnippet-snippets use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

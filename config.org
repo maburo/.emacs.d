@@ -17,7 +17,7 @@ emacs.scrollBar: of
 (setq package-enable-at-startup nil)
 #+END_SRC
 ** Use-package
-https://github.com/jwiegley/use-package
+The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to isolate package configuration in your .emacs file
 #+BEGIN_SRC emacs-lisp
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -62,7 +62,7 @@ https://github.com/jwiegley/use-package
                 ;; don't use hard tabs
                 indent-tabs-mode nil
                 ;; wrap lines
-                fill-column 120)  
+                fill-column 120)
 
   (setq inhibit-startup-screen t
         ;; no bell
@@ -88,12 +88,12 @@ https://github.com/jwiegley/use-package
 #+END_SRC
 ** Scroll
 #+BEGIN_SRC emacs-lisp
-  (setq scroll-step 1) 
+  (setq scroll-step 1)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 #+END_SRC
 ** COMMENT Font
 #+BEGIN_SRC emacs-lisp
-;;(add-to-list 'default-frame-alist '(font . "mononoki-12")) 
+;;(add-to-list 'default-frame-alist '(font . "mononoki-12"))
 ;;(set-frame-font "Source Code Pro for Powerline-12")
 #+END_SRC
 ** Doom theme
@@ -196,18 +196,46 @@ Provides a minor mode which displays current match and total matches information
             ("delete"                . "DEL") ; delete key
             ("\\`DEL\\'"             . "BS") ; backspace key
             ("next"                  . "PgDn")
-            ("prior"                 . "PgUp")))          
+            ("prior"                 . "PgUp")))
     (which-key-mode 1))
 #+END_SRC
 * Key mappings
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f6>")
-		  (lambda () (interactive) (find-file "~/.emacs.d/config.org")))
+                  (lambda () (interactive) (find-file "~/.emacs.d/config.org")))
   (global-set-key (kbd "S-<f6>")
-		  (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
+                  (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
   (global-set-key (kbd "<f7>") 'switch-to-buffer)
   (global-set-key (kbd "S-<f7>") 'list-buffers)
   ;; (global-set-key (kbd "M-s-/") 'undo-tree-visualize)
+#+END_SRC
+* Edit
+** Undo tree
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :bind ("M-s-/" . undo-tree-visualize))
+#+END_SRC
+** Expand region
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :ensure t
+    :bind ("C-=" . er/expand-region))
+#+END_SRC
+** Visual replace
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-regexp
+    :ensure t
+    :bind (("C-c r" . vr/replace)
+           ("C-c R" . vr/query-replace)
+           ("C-c m" . vr/mc-mark)))
+#+END_SRC
+** Multiple cursors
+https://github.com/magnars/multiple-cursors.el
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    )
 #+END_SRC
 * Company
 #+BEGIN_SRC emacs-lisp
@@ -256,26 +284,6 @@ Provides a minor mode which displays current match and total matches information
     (use-package yasnippet-snippets :ensure t)
     ;; (add-to-list 'yas-snippet-dirs (ag/emacs-subdirectory "snippets"))
     (yas-global-mode t))
-#+END_SRC
-* Undo tree
-#+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :ensure t
-    :bind ("M-s-/" . undo-tree-visualize))
-#+END_SRC
-* Expand region
-#+BEGIN_SRC emacs-lisp
-  (use-package expand-region
-    :ensure t
-    :bind ("C-=" . er/expand-region))
-#+END_SRC
-* Visual replace
-#+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp
-    :ensure t
-    :bind (("C-c r" . vr/replace)
-           ("C-c R" . vr/query-replace)
-           ("C-c m" . vr/mc-mark)))
 #+END_SRC
 * Git
 ** Magit
@@ -330,29 +338,30 @@ M-x: git-timemachine
 ** Helm-projectile
 #+BEGIN_SRC emacs-lisp
   (use-package helm-projectile
-    :ensure t) 
+    :ensure t)
 #+END_SRC
-* Org
-** General
+* Langs
+** Org
+*** General
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :hook ((org-mode . org-indent-mode)
            (org-mode . visual-line-mode)))
 #+END_SRC
-** Org bullets
+*** Org bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :ensure t
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
-* C/C++
-** Cmake-mode
+** C/C++
+*** Cmake-mode
 #+BEGIN_SRC emacs-lisp
   (use-package cmake-mode
     :mode ("CMakeLists.txt" "\\.cmake\\'"))
 #+END_SRC
-* Javascript
-** js2-mode
+** Javascript
+*** js2-mode
 #+BEGIN_SRC emacs-lisp
   (use-package js2-mode
     :ensure t
@@ -363,7 +372,7 @@ M-x: git-timemachine
           js2-basic-indent 2
           js-chain-indent t))
 #+END_SRC
-** tern
+*** tern
 #+BEGIN_SRC emacs-lisp
   (use-package tern
     :requires company
@@ -376,5 +385,36 @@ M-x: git-timemachine
       :ensure t
       :init (add-to-list 'company-backends 'company-tern)))
 #+END_SRC
-* Html
-* Clojure
+** Html
+** Clojure
+*** Clojure mode
+[[https://github.com/clojure-emacs/cider][Clojure mode]] - support for the Clojure(Script) programming language
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :ensure t
+    :init
+    (defconst clojure--prettify-symbols-alist
+      '(("fn"   . ?λ)
+        ("__"   . ?⁈)))
+    :hook
+    (clojure-mode . global-prettify-symbols-mode)
+    :bind
+    (("C-c j" . cider-jack-in)))
+#+END_SRC
+*** Cider
+The [[https://github.com/clojure-emacs/cider][Cider project]] is da bomb. Usage:
+- =cider-jack-in= - For starting an nREPL server and setting
+  everything up. Keyboard: =C-c M-j=
+- =cider= to connect to an existing nREPL server.
+#+BEGIN_SRC elisp
+  (use-package cider
+    :ensure t
+    :commands (cider cider-connect cider-jack-in)
+    :init
+    (setq cider-auto-select-error-buffer t
+          cider-repl-pop-to-buffer-on-connect nil
+          cider-repl-use-clojure-font-lock t
+          cider-repl-wrap-history t
+          cider-repl-history-size 1000
+          cider-show-error-buffer t))
+#+END_SRC
