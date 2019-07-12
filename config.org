@@ -1,3 +1,5 @@
+#+TITLE: Emacs configuration
+
 * .Xresoures
 #+BEGIN_SRC 
 emacs.Font: Source Code Pro for Powerline-12
@@ -235,7 +237,8 @@ https://github.com/magnars/multiple-cursors.el
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
     :ensure t
-    )
+    :bind (("C-M-<up>" . mc/mark-previous-lines)
+           ("C-M-<down>" . mc/mark-next-lines)))
 #+END_SRC
 * Company
 #+BEGIN_SRC emacs-lisp
@@ -301,18 +304,16 @@ https://github.com/magnars/multiple-cursors.el
     (global-git-gutter-mode))
 #+END_SRC
 ** Git-timemachine
-https://gitlab.com/pidu/git-timemachine
-*** help
-M-x: git-timemachine
-- p Visit previous historic version
-- n Visit next historic version
-- w Copy the abbreviated hash of the current historic version
-- W Copy the full hash of the current historic version
-- g Goto nth revision
-- t Goto revision by selected commit message
-- q Exit the time machine.
-- b Run magit-blame on the currently visited revision (if magit available).
-- c Show current commit using magit (if magit available).
+[[https://gitlab.com/pidu/git-timemachine][git-timemachine]] usage:
+- =p= Visit previous historic version
+- =n= Visit next historic version
+- =w= Copy the abbreviated hash of the current historic version
+- =W= Copy the full hash of the current historic version
+- =g= Goto nth revision
+- =t= Goto revision by selected commit message
+- =q= Exit the time machine.
+- =b= Run magit-blame on the currently visited revision (if magit available).
+- =c= Show current commit using magit (if magit available).
 #+BEGIN_SRC emacs-lisp
   (use-package git-timemachine
     :ensure t)
@@ -345,6 +346,8 @@ M-x: git-timemachine
 *** General
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    ;; :init
+    ;; (require 'ob-js)
     :hook ((org-mode . org-indent-mode)
            (org-mode . visual-line-mode)))
 #+END_SRC
@@ -367,6 +370,7 @@ M-x: git-timemachine
     :ensure t
     :mode "\\.js\\'"
     :interpreter "node"
+    :hook (js-mode . js2-minor-mode)
     :config
     (setq js-indent-level 2
           js2-basic-indent 2
