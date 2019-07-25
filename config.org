@@ -32,6 +32,35 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
     :defer
     :ensure t)
 #+END_SRC
+* Workspaces
+#+BEGIN_SRC emacs-lisp
+  (use-package workgroups2
+    :ensure t
+    :bind ("<f9>" . wg-switch-to-workgroup)
+    :config
+    (workgroups-mode 1)
+    (setq wg-session-file "~/.emacs.d/.emacs_workgroups"
+          wg-emacs-exit-save-behavior 'save
+          wg-workgroups-mode-exit-save-behavior 'save))
+#+END_SRC
+* Files & backup
+#+BEGIN_SRC elisp
+  (setq-default create-lockfiles nil
+                ;;make-backup-files nil
+                ;;auto-save-default nil
+                )
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+#+END_SRC
+** Ranger
+#+BEGIN_SRC elisp
+  (use-package ranger
+    :commands (ranger)
+    :ensure t
+    :demand t)
+#+END_SRC
 * Appearance
 ** General
 #+BEGIN_SRC emacs-lisp
@@ -56,9 +85,7 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
   ;; No cursor blinking, it's distracting
   (blink-cursor-mode 0)
 
-  (setq-default create-lockfiles nil
-                make-backup-files nil
-                initial-scratch-message nil
+  (setq-default initial-scratch-message nil
                 ;; no beeping or blinking please
                 ring-bell-function #'ignore
                 ;; don't use hard tabs
@@ -163,6 +190,8 @@ Provides a minor mode which displays current match and total matches information
   ;; This allows partial matches, e.g. "tl" will match "Tyrion Lannister"
   (setq ido-enable-flex-matching t)
   (setq ido-use-filename-at-point nil)
+  ;; stop ido from suggesting when naming new file
+  (define-key (cdr ido-minor-mode-map-entry) [remap write-file] nil)
   (defalias 'list-buffers 'ibuffer)
 
   ;; Don't try to match file across all "work" directories; only match files
@@ -171,6 +200,11 @@ Provides a minor mode which displays current match and total matches information
 
   ;; Includes buffer names of recently open files, even if they're not open now
   (setq ido-use-virtual-buffers t)
+
+  (use-package ido-vertical-mode
+    :ensure t
+    :config
+    (ido-vertical-mode 1))
 #+END_SRC
 * SMEX
 #+BEGIN_SRC emacs-lisp
@@ -201,6 +235,15 @@ Provides a minor mode which displays current match and total matches information
             ("prior"                 . "PgUp")))
     (which-key-mode 1))
 #+END_SRC
+* Helpful
+#+BEGIN_SRC elisp
+  (use-package helpful
+    :ensure t
+    :bind (("C-h f" . helpful-callable)
+           ("C-h v" . helpful-variable)
+           ("C-h k" . helpful-key)
+           ("C-h C-d" . helpful-at-point)))
+#+END_SRC
 * Key mappings
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "<f6>")
@@ -210,6 +253,39 @@ Provides a minor mode which displays current match and total matches information
   (global-set-key (kbd "<f7>") 'switch-to-buffer)
   (global-set-key (kbd "S-<f7>") 'list-buffers)
   ;; (global-set-key (kbd "M-s-/") 'undo-tree-visualize)
+#+END_SRC
+* Hydra
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra
+    :ensure t
+    :config
+    (defhydra hydra-win (global-map "<S-f8>")
+      "window size"
+      ("f" shrink-window  "shrink")
+      ("j" enlarge-window "enlarge")
+      ("d" shrink-window-horizontally "shrink H")
+      ("k" enlarge-window-horizontally "enlarge H")
+      ("2" split-window-below "split below")
+      ("3" split-window-right "split right")
+      ("o" other-window "other window")))
+#+END_SRC
+* Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    ;;    :hook (prog-mode . (lambda () company-mode))
+    :init
+    (global-company-mode)
+    :config
+    ;; From https://github.com/company-mode/company-mode/issues/87
+    ;; See also https://github.com/company-mode/company-mode/issues/123
+    (defadvice company-pseudo-tooltip-unless-just-one-frontend
+        (around only-show-tooltip-when-invoked activate)
+      (when (company-explicit-action-p)
+        ad-do-it))
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-lenght 2)
+    (diminish 'company-mode))
 #+END_SRC
 * Edit
 ** Undo tree
@@ -237,26 +313,9 @@ https://github.com/magnars/multiple-cursors.el
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
     :ensure t
-    :bind (("C-M-<up>" . mc/mark-previous-lines)
-           ("C-M-<down>" . mc/mark-next-lines)))
-#+END_SRC
-* Company
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :ensure t
-    ;;    :hook (prog-mode . (lambda () company-mode))
-    :init
-    (global-company-mode)
-    :config
-    ;; From https://github.com/company-mode/company-mode/issues/87
-    ;; See also https://github.com/company-mode/company-mode/issues/123
-    (defadvice company-pseudo-tooltip-unless-just-one-frontend
-        (around only-show-tooltip-when-invoked activate)
-      (when (company-explicit-action-p)
-        ad-do-it))
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-lenght 2)
-    (diminish 'company-mode))
+    :bind (("C-M-<up>" . mc/mark-previous-like-this)
+           ("C-M-<down>" . mc/mark-next-like-this)
+           ("C-M-<mouse-1>" . mc/add-cursor-on-click)))
 #+END_SRC
 * Flycheck
 #+BEGIN_SRC emacs-lisp
@@ -345,8 +404,13 @@ https://github.com/magnars/multiple-cursors.el
 ** Org
 *** General
 #+BEGIN_SRC emacs-lisp
+  (setq org-image-actual-width nil)
+
   (use-package org
-    ;; :init
+    :init
+    (setq org-image-actual-width nil
+          ;;org-startup-with-inline-images t
+          )
     ;; (require 'ob-js)
     :hook ((org-mode . org-indent-mode)
            (org-mode . visual-line-mode)))
@@ -410,12 +474,13 @@ The [[https://github.com/clojure-emacs/cider][Cider project]] is da bomb. Usage:
 - =cider-jack-in= - For starting an nREPL server and setting
   everything up. Keyboard: =C-c M-j=
 - =cider= to connect to an existing nREPL server.
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (use-package cider
     :ensure t
     :commands (cider cider-connect cider-jack-in)
     :init
     (setq cider-auto-select-error-buffer t
+          cider-repl-use-pretty-printing t
           cider-repl-pop-to-buffer-on-connect nil
           cider-repl-use-clojure-font-lock t
           cider-repl-wrap-history t
