@@ -55,7 +55,7 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
         `((".*" ,temporary-file-directory t)))
 #+END_SRC
 ** Ranger
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (use-package ranger
     :commands (ranger)
     :ensure t
@@ -316,6 +316,10 @@ https://github.com/magnars/multiple-cursors.el
     :bind (("C-M-<up>" . mc/mark-previous-like-this)
            ("C-M-<down>" . mc/mark-next-like-this)
            ("C-M-<mouse-1>" . mc/add-cursor-on-click)))
+#+END_SRC
+** Paredit
+#+BEGIN_SRC emacs-lisp
+
 #+END_SRC
 * Flycheck
 #+BEGIN_SRC emacs-lisp
