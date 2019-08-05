@@ -44,7 +44,7 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
           wg-workgroups-mode-exit-save-behavior 'save))
 #+END_SRC
 * Files & backup
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emaks-lisp
   (setq-default create-lockfiles nil
                 ;;make-backup-files nil
                 ;;auto-save-default nil
@@ -96,6 +96,8 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
   (setq inhibit-startup-screen t
         ;; no bell
         ring-bell-function 'ignore)
+  (when (fboundp 'winner-mode)
+    (winner-mode 1))
 #+END_SRC
 ** Title
 #+BEGIN_SRC emacs-lisp
@@ -236,7 +238,7 @@ Provides a minor mode which displays current match and total matches information
     (which-key-mode 1))
 #+END_SRC
 * Helpful
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
   (use-package helpful
     :ensure t
     :bind (("C-h f" . helpful-callable)
@@ -320,6 +322,14 @@ https://github.com/magnars/multiple-cursors.el
 ** Paredit
 #+BEGIN_SRC emacs-lisp
 
+#+END_SRC
+** Show trailing whitespaces
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
+#+END_SRC
+** Use space for tabs
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 * Flycheck
 #+BEGIN_SRC emacs-lisp
@@ -426,10 +436,29 @@ https://github.com/magnars/multiple-cursors.el
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
 ** C/C++
+*** Folding
+Usage:
+| C-c @ C-c   | hs-toggle-hiding |
+| C-c @ C-h   | hs-hide-block    |
+| C-c @ C-l   | hs-hide-level    |
+| C-c @ C-s   | hs-show-block    |
+| C-c @ C-M-h | hs-hide-all      |
+| C-c @ C-M-s | hs-show-all      |
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
+#+END_SRC
 *** Cmake-mode
 #+BEGIN_SRC emacs-lisp
   (use-package cmake-mode
     :mode ("CMakeLists.txt" "\\.cmake\\'"))
+#+END_SRC
+*** Company c/++ headers
+Auto-completion for C/C++ headers using Company [[https://github.com/randomphrase/company-c-headers][github]]
+#+BEGIN_SRC emacs-lisp
+  (use-package company-c-headers
+    :ensure t
+    :config
+    (add-to-list 'company-backends 'company-c-headers))
 #+END_SRC
 ** Javascript
 *** js2-mode
