@@ -7,6 +7,29 @@ emacs.menuBar: off
 emacs.toolBar: off
 emacs.scrollBar: of
 #+END_SRC
+* Server
+#+begin_src emacs-lisp
+  (load "server")
+  (unless (server-running-p) (server-start))
+#+end_src
+** Mint
+/usr/share/applications/emacsclient.desktop
+#+BEGIN_SRC shell
+[Desktop Entry]
+Version=1.0
+Name=Emacs client
+GenericName=Text Editor
+Comment=GNU Emacs is an extensible, customizable text editor - and more
+MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+TryExec=/usr/bin/emacsclient
+Exec=/usr/bin/emacsclient -c %F
+Icon=emacs24
+Type=Application
+Terminal=false
+Categories=Utility;Development;TextEditor;
+StartupWMClass=Emacs24
+Keywords=Text;Editor;
+#+END_SRC
 * Packages
 ** Init pacakge
 #+BEGIN_SRC emacs-lisp
@@ -290,6 +313,35 @@ Provides a minor mode which displays current match and total matches information
     (diminish 'company-mode))
 #+END_SRC
 * Edit
+** Go to beginning of the line
+#+BEGIN_SRC emacs-lisp
+  (defun smarter-move-beginning-of-line (arg)
+    "Move point back to indentation of beginning of line.
+
+  Move point to the first non-whitespace character on this line.
+  If point is already there, move to the beginning of the line.
+  Effectively toggle between the first non-whitespace character and
+  the beginning of the line.
+
+  If ARG is not nil or 1, move forward ARG - 1 lines first.  If
+  point reaches the beginning or end of the buffer, stop there."
+    (interactive "^p")
+    (setq arg (or arg 1))
+
+    ;; Move lines first
+    (when (/= arg 1)
+      (let ((line-move-visual nil))
+        (forward-line (1- arg))))
+
+    (let ((orig-point (point)))
+      (back-to-indentation)
+      (when (= orig-point (point))
+        (move-beginning-of-line 1))))
+
+  ;; remap C-a to `smarter-move-beginning-of-line'
+  (global-set-key [remap move-beginning-of-line]
+                  'smarter-move-beginning-of-line)
+#+END_SRC
 ** Undo tree
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -419,6 +471,7 @@ https://github.com/magnars/multiple-cursors.el
 *** General
 #+BEGIN_SRC emacs-lisp
   (setq org-image-actual-width nil)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
   (use-package org
     :init
@@ -436,6 +489,10 @@ https://github.com/magnars/multiple-cursors.el
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
 ** C/C++
+*** General
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-common-hook (lambda () (local-set-key (kbd "C-c o") 'ff-find-other-file)))
+#+END_SRC
 *** Folding
 Usage:
 | C-c @ C-c   | hs-toggle-hiding |
@@ -519,4 +576,10 @@ The [[https://github.com/clojure-emacs/cider][Cider project]] is da bomb. Usage:
           cider-repl-wrap-history t
           cider-repl-history-size 1000
           cider-show-error-buffer t))
+#+END_SRC
+** Docker
+*** Docker-compose
+#+BEGIN_SRC emacs-lisp
+  (use-package docker-compose-mode
+    :ensure t)
 #+END_SRC
