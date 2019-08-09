@@ -418,7 +418,7 @@ https://github.com/magnars/multiple-cursors.el
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
-    :bind (("C-x g" . magit-status)))
+    :bind (("s-g" . magit-status)))
 #+END_SRC
 ** Git-gutter
 #+BEGIN_SRC emacs-lisp
@@ -454,6 +454,21 @@ https://github.com/magnars/multiple-cursors.el
     :config
     (projectile-mode t)
     (setq projectile-require-project-root nil))
+#+END_SRC
+* Skeletor
+#+BEGIN_SRC emacs-lisp
+  (use-package skeletor
+    :commands (skeletor-create-project)
+    :ensure t
+    :config
+    (setq skeletor-user-directory "~/.emacs.d/skeletor-user-directory"
+           skeletor-project-directory "~/projects")
+    (skeletor-define-template "webpack-js"
+      :title "Webpack JS"
+      :default-license (rx bol "gpl")
+      :after-creation
+      (lambda (dir) (skeletor-shell-command "npm i"))
+      ))
 #+END_SRC
 * Helm
 ** Helm

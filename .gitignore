@@ -2,3 +2,5 @@
 !init.el
 !config.org
 !.gitignore
+!skeletor-user-directory
+!skeletor-user-directory/**
