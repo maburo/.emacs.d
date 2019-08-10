@@ -141,9 +141,14 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
   (setq-default buffer-file-coding-system 'utf-8)
 #+END_SRC
 ** Scroll
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Scrolling.html][Automatic scrolling]]
 #+BEGIN_SRC emacs-lisp
-  (setq scroll-step 1)
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+  (setq scroll-step 1        
+        scroll-conservatively 1
+        auto-window-vscroll nil
+  ;;      scroll-up-aggressively 0.01
+  ;;      scroll-down-aggressively 0.01
+        mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 #+END_SRC
 ** COMMENT Font
 #+BEGIN_SRC emacs-lisp
@@ -277,6 +282,7 @@ Provides a minor mode which displays current match and total matches information
                   (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
   (global-set-key (kbd "<f7>") 'switch-to-buffer)
   (global-set-key (kbd "S-<f7>") 'list-buffers)
+  (global-set-key (kbd "s-k") 'kill-this-buffer)
   ;; (global-set-key (kbd "M-s-/") 'undo-tree-visualize)
 #+END_SRC
 * Hydra
@@ -383,6 +389,23 @@ https://github.com/magnars/multiple-cursors.el
 #+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil)
 #+END_SRC
+** Smart hungry delete
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-hungry-delete
+    :ensure t
+    :bind (("<backspace>" . smart-hungry-delete-backward-char)
+           ("C-d" . smart-hungry-delete-forward-char)
+           ("<delete>" . smart-hungry-delete-forward-char))
+    :defer nil ;; dont defer so we can add our functions to hooks
+    :config (smart-hungry-delete-add-default-hooks))
+#+END_SRC
+** Drag stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package drag-stuff
+    :ensure t
+    :bind (("M-<up>" . drag-stuff-up)
+           ("M-<down>" . drag-stuff-down)))
+#+END_SRC
 * Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
@@ -410,7 +433,6 @@ https://github.com/magnars/multiple-cursors.el
     ;;        ("C-c y x" . yas-expand))
     :config
     (use-package yasnippet-snippets :ensure t)
-    ;; (add-to-list 'yas-snippet-dirs (ag/emacs-subdirectory "snippets"))
     (yas-global-mode t))
 #+END_SRC
 * Git
@@ -457,18 +479,17 @@ https://github.com/magnars/multiple-cursors.el
 #+END_SRC
 * Skeletor
 #+BEGIN_SRC emacs-lisp
-  (use-package skeletor
-    :commands (skeletor-create-project)
-    :ensure t
-    :config
-    (setq skeletor-user-directory "~/.emacs.d/skeletor-user-directory"
-           skeletor-project-directory "~/projects")
-    (skeletor-define-template "webpack-js"
-      :title "Webpack JS"
-      :default-license (rx bol "gpl")
-      :after-creation
-      (lambda (dir) (skeletor-shell-command "npm i"))
-      ))
+    (use-package skeletor
+      :commands (skeletor-create-project)
+      :ensure t
+      :config
+      (setq skeletor-user-directory "~/.emacs.d/skeletor-user-directory"
+             skeletor-project-directory "~/projects")
+      (skeletor-define-template "webpack-js"
+        :title "Webpack JS"
+        :default-license (rx bol "gpl")
+        :after-creation
+        (lambda (dir) (skeletor-shell-command "npm i"))))
 #+END_SRC
 * Helm
 ** Helm
@@ -559,6 +580,13 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
       :init (add-to-list 'company-backends 'company-tern)))
 #+END_SRC
 ** Html
+*** Emmet-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+    :ensure t
+    :diminish
+    :hook (web-mode . emmet-mode))
+#+END_SRC
 ** Clojure
 *** Clojure mode
 [[https://github.com/clojure-emacs/cider][Clojure mode]] - support for the Clojure(Script) programming language

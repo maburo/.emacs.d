@@ -2,5 +2,7 @@
 !init.el
 !config.org
 !.gitignore
+!snippets/
+!snippets/**
 !skeletor-user-directory
 !skeletor-user-directory/**

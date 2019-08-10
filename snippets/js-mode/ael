@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Add event listner
+# key: ael
+# --
+.addEventListener('${1:event}', $0);
