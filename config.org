@@ -67,7 +67,7 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
           wg-workgroups-mode-exit-save-behavior 'save))
 #+END_SRC
 * Files & backup
-#+BEGIN_SRC emaks-lisp
+#+BEGIN_SRC emacs-lisp
   (setq-default create-lockfiles nil
                 ;;make-backup-files nil
                 ;;auto-save-default nil
