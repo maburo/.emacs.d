@@ -69,13 +69,12 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
 * Files & backup
 #+BEGIN_SRC emacs-lisp
   (setq-default create-lockfiles nil
-                ;;make-backup-files nil
-                ;;auto-save-default nil
-                )
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
+                make-backup-files nil
+                auto-save-default nil)
+  ;; (setq backup-directory-alist
+  ;;       `((".*" . ,temporary-file-directory)))
+  ;; (setq auto-save-file-name-transforms
+  ;;       `((".*" ,temporary-file-directory t)))
 #+END_SRC
 ** Ranger
 #+BEGIN_SRC emacs-lisp
