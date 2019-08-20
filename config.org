@@ -83,6 +83,12 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
     :ensure t
     :demand t)
 #+END_SRC
+** Dired
+#+BEGIN_SRC emacs-lisp
+  ;; always delete and copy recursively
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always)
+#+END_SRC
 * Appearance
 ** General
 #+BEGIN_SRC emacs-lisp
@@ -94,6 +100,9 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
 
   ;; line numbers
   (global-display-line-numbers-mode t)
+
+  ;; Column numbers in modeline
+  ;; (column-number-mode t)
 
   ;; Highlight current line
   (global-hl-line-mode 1)
@@ -142,11 +151,12 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
 ** Scroll
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Scrolling.html][Automatic scrolling]]
 #+BEGIN_SRC emacs-lisp
-  (setq scroll-step 1        
+  (setq scroll-step 1
+        scroll-margin 1
+        scroll-up-aggressively 0.01
+        scroll-down-aggressively 0.01
         scroll-conservatively 1
         auto-window-vscroll nil
-  ;;      scroll-up-aggressively 0.01
-  ;;      scroll-down-aggressively 0.01
         mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 #+END_SRC
 ** COMMENT Font
@@ -275,10 +285,10 @@ Provides a minor mode which displays current match and total matches information
 #+END_SRC
 * Key mappings
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f6>")
-                  (lambda () (interactive) (find-file "~/.emacs.d/config.org")))
-  (global-set-key (kbd "S-<f6>")
-                  (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
+  ;; (global-set-key (kbd "<f6>")
+  ;;                 (lambda () (interactive) (find-file "~/.emacs.d/config.org")))
+  ;; (global-set-key (kbd "S-<f6>")
+  ;;                 (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
   (global-set-key (kbd "<f7>") 'switch-to-buffer)
   (global-set-key (kbd "S-<f7>") 'list-buffers)
   (global-set-key (kbd "s-k") 'kill-this-buffer)
@@ -318,6 +328,10 @@ Provides a minor mode which displays current match and total matches information
     (diminish 'company-mode))
 #+END_SRC
 * Edit
+** General
+#+BEGIN_SRC emacs-lisp
+  (delete-selection-mode +1)
+#+END_SRC
 ** Go to beginning of the line
 #+BEGIN_SRC emacs-lisp
   (defun smarter-move-beginning-of-line (arg)
@@ -376,13 +390,24 @@ https://github.com/magnars/multiple-cursors.el
            ("C-M-<down>" . mc/mark-next-like-this)
            ("C-M-<mouse-1>" . mc/add-cursor-on-click)))
 #+END_SRC
+** Smart parens
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :ensure t
+    :diminish smartparens-mode
+    :config
+    (progn
+      (require 'smartparens-config)
+      (add-hook 'js-mode-hook #'smartparens-mode)
+      (add-hook 'c-mode-common-hook #'smartparens-mode)))
+#+END_SRC
 ** Paredit
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
 ** Show trailing whitespaces
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
+(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 0)))
 #+END_SRC
 ** Use space for tabs
 #+BEGIN_SRC emacs-lisp
@@ -405,12 +430,26 @@ https://github.com/magnars/multiple-cursors.el
     :bind (("M-<up>" . drag-stuff-up)
            ("M-<down>" . drag-stuff-down)))
 #+END_SRC
+** Copy file path
+#+BEGIN_SRC emacs-lisp
+  (defun copy-file-name-to-clipboard ()
+    "Copy the current buffer file name to the clipboard."
+    (interactive)
+    (let ((filename (if (equal major-mode 'dired-mode)
+                        default-directory
+                      (buffer-file-name))))
+      (when filename
+        (kill-new filename)
+        (message "Copied buffer file name '%s' to the clipboard." filename))))
+#+END_SRC
 * Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
     :mode (("\\.h\\(h?\\|xx\\|pp\\)\\'" . c++-mode)
            ("\\.m\\'" . c-mode)
            ("\\.mm\\'" . c++-mode))
+    :hook ((c-mode . flycheck-mode)
+           (c++-mode . flycheck-mode))
     :ensure t)
 #+END_SRC
 * Yansippet
@@ -466,15 +505,16 @@ https://github.com/magnars/multiple-cursors.el
 #+END_SRC
 * Projectile
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile
-;;    :defer 5
-    :diminish
-    :ensure t
-    :bind (("C-c p" . projectile-command-map)
-           ("s-p" . projectile-command-map))
-    :config
-    (projectile-mode t)
-    (setq projectile-require-project-root nil))
+    (use-package projectile
+  ;;    :defer 5
+      :diminish
+      :ensure t
+      :bind (("C-c p" . projectile-command-map)
+             ("s-p" . projectile-command-map)
+             ("<f7>". helm-projectile-switch-to-buffer))
+      :config
+      (projectile-mode t)
+      (setq projectile-require-project-root nil))
 #+END_SRC
 * Skeletor
 #+BEGIN_SRC emacs-lisp
@@ -494,7 +534,14 @@ https://github.com/magnars/multiple-cursors.el
 ** Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
-    :ensure t)
+    :ensure t
+    :bind (("M-<f3>" . helm-occur)
+           ("<f6>" . helm-imenu)))
+    ;;:config
+    ;;(setq helm-split-window-in-side-p t)
+    ;;(setq helm-autoresize-max-height 50)
+    ;;(setq helm-autoresize-min-height 30)
+    ;;(helm-autoresize-mode t))
 #+END_SRC
 ** Helm-projectile
 #+BEGIN_SRC emacs-lisp
@@ -552,6 +599,12 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
     :config
     (add-to-list 'company-backends 'company-c-headers))
 #+END_SRC
+*** Modern c++
+#+BEGIN_SRC emacs-lisp
+  (use-package modern-cpp-font-lock
+    :ensure t
+    :hook (c++-mode . modern-cpp-font-lock))
+#+END_SRC
 ** Javascript
 *** js2-mode
 #+BEGIN_SRC emacs-lisp
@@ -559,7 +612,8 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
     :ensure t
     :mode "\\.js\\'"
     :interpreter "node"
-    :hook (js-mode . js2-minor-mode)
+    :hook ((js-mode . js2-minor-mode)
+           (js-mode . hs-minor-mode))
     :config
     (setq js-indent-level 2
           js2-basic-indent 2
