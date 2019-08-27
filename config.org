@@ -57,14 +57,14 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
 #+END_SRC
 * Workspaces
 #+BEGIN_SRC emacs-lisp
-  (use-package workgroups2
-    :ensure t
-    :bind ("<f9>" . wg-switch-to-workgroup)
-    :config
-    (workgroups-mode 1)
-    (setq wg-session-file "~/.emacs.d/.emacs_workgroups"
-          wg-emacs-exit-save-behavior 'save
-          wg-workgroups-mode-exit-save-behavior 'save))
+;;  (use-package workgroups2
+;;    :ensure t
+;;    :bind ("<f9>" . wg-switch-to-workgroup)
+;;    :config
+;;    (workgroups-mode 1)
+;;    (setq wg-session-file "~/.emacs.d/.emacs_workgroups"
+;;          wg-emacs-exit-save-behavior 'save
+;;          wg-workgroups-mode-exit-save-behavior 'save))
 #+END_SRC
 * Files & backup
 #+BEGIN_SRC emacs-lisp
@@ -148,15 +148,20 @@ The [[https://github.com/jwiegley/use-package][use-package]] macro allows you to
   (setq locale-coding-system   'utf-8)
   (setq-default buffer-file-coding-system 'utf-8)
 #+END_SRC
-** Scroll
+** Smooth scroll
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Scrolling.html][Automatic scrolling]]
 #+BEGIN_SRC emacs-lisp
-  (setq scroll-step 1
-        scroll-margin 1
-        scroll-up-aggressively 0.01
-        scroll-down-aggressively 0.01
-        scroll-conservatively 1
-        auto-window-vscroll nil
+  ;; (setq scroll-step 1
+  ;;       scroll-margin 1
+  ;;       scroll-up-aggressively 0.01
+  ;;       scroll-down-aggressively 0.01
+  ;;       scroll-conservatively 1
+  ;;       auto-window-vscroll nil
+  ;;       mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+
+  (setq scroll-preserve-screen-position t
+        scroll-conservatively 101
+        scroll-margin 0
         mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 #+END_SRC
 ** COMMENT Font
@@ -289,9 +294,11 @@ Provides a minor mode which displays current match and total matches information
   ;;                 (lambda () (interactive) (find-file "~/.emacs.d/config.org")))
   ;; (global-set-key (kbd "S-<f6>")
   ;;                 (lambda () (interactive) (load-file "~/.emacs.d/init.el")))
-  (global-set-key (kbd "<f7>") 'switch-to-buffer)
-  (global-set-key (kbd "S-<f7>") 'list-buffers)
+  ;; (global-set-key (kbd "<f7>") 'switch-to-buffer)
+  ;; (global-set-key (kbd "S-<f9>") 'list-buffers)
   (global-set-key (kbd "s-k") 'kill-this-buffer)
+  (global-set-key (kbd "C-<f3>") 'kmacro-start-macro-or-insert-counter)
+  (global-set-key (kbd "C-<f4>") 'kmacro-end-or-call-macro)
   ;; (global-set-key (kbd "M-s-/") 'undo-tree-visualize)
 #+END_SRC
 * Hydra
@@ -313,7 +320,6 @@ Provides a minor mode which displays current match and total matches information
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
-    ;;    :hook (prog-mode . (lambda () company-mode))
     :init
     (global-company-mode)
     :config
@@ -324,7 +330,9 @@ Provides a minor mode which displays current match and total matches information
       (when (company-explicit-action-p)
         ad-do-it))
     (setq company-idle-delay 0)
-    (setq company-minimum-prefix-lenght 2)
+    (setq company-minimum-prefix-lenght 1)
+    (setq completion-ignore-case t)
+    (setq company-show-numbers t)
     (diminish 'company-mode))
 #+END_SRC
 * Edit
@@ -365,7 +373,7 @@ Provides a minor mode which displays current match and total matches information
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
     :ensure t
-    :bind ("M-s-/" . undo-tree-visualize))
+    :bind ("C-s-/" . undo-tree-visualize))
 #+END_SRC
 ** Expand region
 #+BEGIN_SRC emacs-lisp
@@ -403,11 +411,18 @@ https://github.com/magnars/multiple-cursors.el
 #+END_SRC
 ** Paredit
 #+BEGIN_SRC emacs-lisp
-
+  (use-package paredit
+    :ensure t
+    :hook ((emacs-lisp-mode . paredit-mode)
+           (lisp-interaction-mode . paredit-mode)
+           (ielm-mode . paredit-mode)
+           (lisp-mode . paredit-mode)
+           (eval-expression-minibuffer-setup . paredit-mode)
+           (clojure-mode . paredit-mode)))
 #+END_SRC
 ** Show trailing whitespaces
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 0)))
+;; (add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 0)))
 #+END_SRC
 ** Use space for tabs
 #+BEGIN_SRC emacs-lisp
@@ -511,7 +526,7 @@ https://github.com/magnars/multiple-cursors.el
       :ensure t
       :bind (("C-c p" . projectile-command-map)
              ("s-p" . projectile-command-map)
-             ("<f7>". helm-projectile-switch-to-buffer))
+             ("<f9>". helm-projectile-switch-to-buffer))
       :config
       (projectile-mode t)
       (setq projectile-require-project-root nil))
@@ -532,11 +547,16 @@ https://github.com/magnars/multiple-cursors.el
 #+END_SRC
 * Helm
 ** Helm
+http://tuhdo.github.io/helm-intro.html
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :ensure t
-    :bind (("M-<f3>" . helm-occur)
-           ("<f6>" . helm-imenu)))
+    :bind (("<f3>" . helm-occur)
+           ("<f4>" . helm-imenu)
+           ("<f9>" . helm-buffers-list)
+           ("C-x r l" . helm-filtered-bookmarks)
+           ("C-x C-f" . helm-find-files)
+           ("M-x" . helm-M-x)))
     ;;:config
     ;;(setq helm-split-window-in-side-p t)
     ;;(setq helm-autoresize-max-height 50)
@@ -546,7 +566,8 @@ https://github.com/magnars/multiple-cursors.el
 ** Helm-projectile
 #+BEGIN_SRC emacs-lisp
   (use-package helm-projectile
-    :ensure t)
+    :ensure t
+    :bind (("<f12>" . helm-projectile)))
 #+END_SRC
 * Langs
 ** Org
@@ -570,10 +591,15 @@ https://github.com/magnars/multiple-cursors.el
     :ensure t
     :hook (org-mode . org-bullets-mode))
 #+END_SRC
+** Emacs lisp
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
 ** C/C++
 *** General
 #+BEGIN_SRC emacs-lisp
   (add-hook 'c-mode-common-hook (lambda () (local-set-key (kbd "C-c o") 'ff-find-other-file)))
+  (add-hook 'c-mode-common-hook (lambda () (semantic-mode 1) ))
 #+END_SRC
 *** Folding
 Usage:
@@ -613,7 +639,8 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
     :mode "\\.js\\'"
     :interpreter "node"
     :hook ((js-mode . js2-minor-mode)
-           (js-mode . hs-minor-mode))
+           (js-mode . hs-minor-mode)
+           (js-mode . js2-imenu-extras-mode))
     :config
     (setq js-indent-level 2
           js2-basic-indent 2
@@ -644,16 +671,24 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
 *** Clojure mode
 [[https://github.com/clojure-emacs/cider][Clojure mode]] - support for the Clojure(Script) programming language
 #+BEGIN_SRC emacs-lisp
-  (use-package clojure-mode
+    (use-package clojure-mode
+      :ensure t
+      :init
+      (defconst clojure--prettify-symbols-alist
+        '(("fn"   . ?λ)
+          ("__"   . ?⁈)))
+      :hook ((cider-repl-mode . paredit-mode))
+      :bind
+      (("C-c j" . cider-jack-in)))
+  ;;x(push 'company-capf company-backends-cider-mode)
+  ;;(push 'company-capf company-backends-cider-repl-mode)
+#+END_SRC
+*** Clojure refactor
+#+BEGIN_SRC emacs-lisp
+  (use-package clj-refactor
     :ensure t
-    :init
-    (defconst clojure--prettify-symbols-alist
-      '(("fn"   . ?λ)
-        ("__"   . ?⁈)))
-    :hook
-    (clojure-mode . global-prettify-symbols-mode)
-    :bind
-    (("C-c j" . cider-jack-in)))
+    :defer t
+    :hook (clojure-mode . clj-refactor-mode)) 
 #+END_SRC
 *** Cider
 The [[https://github.com/clojure-emacs/cider][Cider project]] is da bomb. Usage:
@@ -664,6 +699,9 @@ The [[https://github.com/clojure-emacs/cider][Cider project]] is da bomb. Usage:
   (use-package cider
     :ensure t
     :commands (cider cider-connect cider-jack-in)
+    :hook ((clojure-mode . cider-mode)
+           (cider-repl-mode . cider-company-enable-fuzzy-completion)
+           (cider-mode . cider-company-enable-fuzzy-completion))
     :init
     (setq cider-auto-select-error-buffer t
           cider-repl-use-pretty-printing t
