@@ -8,6 +8,7 @@ emacs.toolBar: off
 emacs.scrollBar: of
 #+END_SRC
 * Server
+/usr/local/bin/emacs --fg-daemon
 #+begin_src emacs-lisp
   (load "server")
   (unless (server-running-p) (server-start))
@@ -668,6 +669,16 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
       :ensure t
       :init (add-to-list 'company-backends 'company-tern)))
 #+END_SRC
+** Typescript
+*** Tide
+#+BEGIN_SRC emacs-lisp
+  (use-package tide
+    :ensure t
+    :after (typescript-mode company flycheck)
+    :hook ((typescript-mode . tide-setup)
+           (typescript-mode . tide-hl-identifier-mode)
+           (before-save . tide-format-before-save)))
+#+END_SRC
 ** Html
 *** Emmet-mode
 #+BEGIN_SRC emacs-lisp
@@ -676,6 +687,21 @@ Auto-completion for C/C++ headers using Company [[https://github.com/randomphras
     :diminish
     :bind ("C-j" . emmet-expand-line)
     :hook (web-mode . emmet-mode))
+#+END_SRC
+*** Web-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :mode ("\\.tsx\\'" . web-mode)
+    :requires tide
+    :hook (web-mode . (lambda ()
+                        (when (string-equal "tsx"
+                                            (file-name-extension buffer-file-name))
+                          (progn ((interactive)
+                                  (tide-setup)
+                                  (flycheck-mode +1)
+                                  (eldoc-mode +1)
+                                  (tide-hl-identifier-mode +1)))))))
 #+END_SRC
 ** Clojure
 *** Clojure mode
