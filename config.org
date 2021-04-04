@@ -1,0 +1,194 @@
+#+TITLE: Emacs configuration
+
+* Global settings
+#+BEGIN_SRC emacs-lisp
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(tooltip-mode -1)
+(show-paren-mode t)
+
+;; line numbers
+(global-display-line-numbers-mode t)
+
+;; Highlight current line
+(global-hl-line-mode 1)
+
+;; Changes all yes/no questions to y/n type
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+* Packages
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(setq package-enable-at-at-startup nil)
+
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+                         ("gnu"   . "http://elpa.gnu.org/packages/")
+                         ("melpa-stable" . "http://stable.melpa.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+
+(package-initialize)
+(setq package-enable-at-startup nil)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(require 'use-package)
+#+END_SRC
+
+* Appearance
+** Title
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))
+                 "%b"))))
+#+END_SRC
+
+** Theme
+#+BEGIN_SRC emacs-lisp
+(use-package doom-themes
+    :ensure t
+    :config
+    (load-theme 'doom-one t)
+    (setq doom-modeline-icon t))
+#+END_SRC
+
+** All the icons
+;; M-x all-the-icons-install-font
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :if window-system
+  :ensure t
+  :config
+  (when (not (member "all-the-icons" (font-family-list)))
+    (all-the-icons-install-fonts t)))
+#+END_SRC
+
+** Modeline
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
+#+END_SRC
+
+** Diminish
+#+BEGIN_SRC emacs-lisp
+(use-package diminish :ensure t)
+#+END_SRC
+
+** Rainbow delimeiters
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+END_SRC
+* Help
+** Which key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :defer 10
+  :diminish which-key-mode
+  :init
+  (setq which-key-separator " "
+        which-key-prefix-prefix "+")
+  :config
+  (setq which-key-key-replacement-alist
+        '(("<\\([[:alnum:]-]+\\)>" . "\\1")
+          ("left"                  . "◀")
+          ("right"                 . "▶")
+          ("up"                    . "▲")
+          ("down"                  . "▼")
+          ("delete"                . "DEL") ; delete key
+          ("\\`DEL\\'"             . "BS") ; backspace key
+          ("next"                  . "PgDn")
+          ("prior"                 . "PgUp")))
+  (which-key-mode 1))
+#+END_SRC
+
+** Helpful
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
+  :ensure t
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h C-d" . helpful-at-point)))
+#+END_SRC
+
+* Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+;;    :defer 5
+    :diminish
+    :ensure t
+    :bind (("C-c p" . projectile-command-map)
+           ("s-p" . projectile-command-map)
+           ("<f9>". helm-projectile-switch-to-buffer))
+    :config
+    (projectile-mode t)
+    (setq projectile-require-project-root nil))
+#+END_SRC
+
+* Helm
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :config 
+    (when (executable-find "curl")
+      (setq helm-google-suggest-use-curl-p t))
+    (setq helm-M-x-fuzzy-match t)
+    (setq helm-buffers-fuzzy-matching t
+          helm-recentf-fuzzy-match    t)
+    (setq helm-semantic-fuzzy-match t
+          helm-imenu-fuzzy-match    t)
+    (setq helm-locate-fuzzy-match t)
+    (setq helm-apropos-fuzzy-match t)
+    (setq helm-lisp-fuzzy-completion t)
+    (helm-mode 1)
+    (helm-autoresize-mode 1)
+  :bind (("<f3>" . helm-occur)
+         ("<f4>" . helm-imenu)
+         ("<f9>" . helm-buffers-list)
+         ("C-x r l" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files)
+         ("M-x" . helm-M-x)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action)   ; rebind tab to do persistent action
+         ("C-i" . helm-execute-persistent-action)     ; make TAB works in terminal
+         ("C-z" . helm-select-action)))               ; list actions using C-z
+
+
+(use-package helm-projectile
+  :ensure t
+  :bind (("<f12>" . helm-projectile)))
+#+END_SRC
+* Autocomplete
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :ensure t
+  :init
+  (global-company-mode)
+  :config
+  ;; From https://github.com/company-mode/company-mode/issues/87
+  ;; See also https://github.com/company-mode/company-mode/issues/123
+  (defadvice company-pseudo-tooltip-unless-just-one-frontend
+      (around only-show-tooltip-when-invoked activate)
+    (when (company-explicit-action-p)
+      ad-do-it))
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-lenght 1)
+  (setq completion-ignore-case t)
+  (setq company-show-numbers t)
+  (diminish 'company-mode))
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+END_SRC
